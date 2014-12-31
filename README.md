@@ -1,0 +1,35 @@
+TODO:
+
+- [ ] R basics
+  - [ ] Installation?
+  - [ ] Reading in data
+  - [ ] Loading packages
+  - [ ] Creating scripts
+  - [ ] Knitr and literate scripting
+  - [ ] Basic syntax
+    - [ ] Constants
+    - [ ] Vectors
+    - [ ] Matrices
+    - [ ] Data frames
+    - [ ] Factors
+    - [ ] Functions
+- [ ] T-tests
+  - [ ] One-sample
+  - [ ] Two-sample
+  - [ ] Paired-samples (equal & unequal variances)
+  - [ ] Graphics
+- [ ] ANOVAs
+  - [ ] One-way
+  - [ ] Two-way
+  - [ ] Two-way with interactions
+  - [ ] Two-way with repeated measures
+  - [ ] Graphics
+- [ ] Correlations
+  - [ ] Bivariate
+  - [ ] Multiple
+  - [ ] Partial
+  - [ ] Graphics
+- [ ] Regressions
+  - [ ] Simple linear
+  - [ ] Multiple
+  - [ ] Graphics

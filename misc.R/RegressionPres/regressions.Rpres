@@ -1,0 +1,312 @@
+Some Fun with Regressions
+========================================================
+author: Christopher Wetherill
+date: 24 July 2014
+css: regressions.css
+
+```{r init, echo = FALSE, results='hide'}
+library(forecast)
+library(xtable)
+library(MASS)
+library(foreign)
+```
+
+Predicting Mortality via Stepwise Regression
+============================================
+```{r ex2, echo = FALSE, results='hide'}
+download.file("https://raw.githubusercontent.com/faulconbridge/miscR/gh-pages/RegressionPres/ex1217.csv", "ex1217.csv", method = "wget", extra = "--no-check-certificate")
+ex1217 <- read.csv("ex1217.csv", header = TRUE)
+data <- read.csv("ex1217.csv", header = TRUE)
+attach(data)
+```
+
+Now let's work with multiple and stepwise regressions. In this example, we will predict a city's mortality rate based off of any of several environmental variables.
+
+```{r ex2Head, echo = FALSE, results='asis'}
+print(xtable(data[1:6,1:6]), type = "html")
+```
+
+Our Predictor Variables
+======================
+- Mean annual precipitation
+- Average humidity
+- Mean Jan. temp
+- Mean July temp
+- Percent residents >65
+- Mean household population
+- Mean years education
+- Percent structurally sound housing
+
+***
+
+- Population density
+- Percent non-white population
+- Percent with white-collar job
+- Percent houses below poverty line
+- Hydrocarbon pollution potential
+- NOX pollution potential
+- SO2 pollution potential
+
+Which To Choose?
+================
+
+Well, we could start with an omnibus model where every possible predictor is included in the model:
+
+```{r omnibus, echo = TRUE}
+fit <- lm(Mortality ~ Precip + Humidity + JanTemp +
+            JulyTemp + Over65 + House + Educ + Sound +
+            Density + NonWhite + WhiteCol + Poor + HC +
+            NOX + SO2, data = data)
+```
+
+But That's Useless...
+=====================
+
+```{r results, eval = FALSE}
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  1.762e+03  4.371e+02   4.032 0.000216 ***
+Precip       1.905e+00  9.233e-01   2.063 0.045066 *  
+Humidity     1.061e-01  1.169e+00   0.091 0.928048    
+JanTemp     -1.935e+00  1.108e+00  -1.746 0.087753 .  
+JulyTemp    -3.102e+00  1.901e+00  -1.632 0.109862    
+Over65      -9.045e+00  8.483e+00  -1.066 0.292111    
+House       -1.065e+02  6.977e+01  -1.527 0.134030    
+Educ        -1.707e+01  1.186e+01  -1.439 0.157246    
+Sound       -6.594e-01  1.768e+00  -0.373 0.710920    
+Density      3.660e-03  4.026e-03   0.909 0.368265    
+NonWhite     4.460e+00  1.326e+00   3.363 0.001604 ** 
+WhiteCol    -1.923e-01  1.661e+00  -0.116 0.908377    
+Poor        -1.653e-01  3.225e+00  -0.051 0.959362    
+HC          -6.722e-01  4.908e-01  -1.370 0.177784    
+NOX          1.340e+00  1.005e+00   1.333 0.189349    
+SO2          8.612e-02  1.475e-01   0.584 0.562185    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 34.91 on 44 degrees of freedom
+Multiple R-squared:  0.7651,  Adjusted R-squared:  0.685 
+F-statistic: 9.552 on 15 and 44 DF,  p-value: 2.16e-09
+```
+
+Try Forward Stepwise Regression?
+================================
+
+Instead, let's start small and build our model up:
+
+```{r subset, echo = TRUE, results = 'hide'}
+data <- subset(data, select = c(Mortality:SO2))
+
+fit2 <- glm(Mortality~1, data = data)
+
+step.forward <- stepAIC(
+  fit2, direction="forward",
+  scope=list(upper = ~ Precip + Humidity + JanTemp +
+               JulyTemp + Over65 + House + Educ + Sound +
+               Density + NonWhite + WhiteCol + Poor + HC +
+               NOX + SO2,lower=~1),
+  trace=TRUE)
+```
+
+The Process...
+==============
+- Mortality ~ 1
+- Mortality ~ NonWhite
+- Mortality ~ NonWhite + Educ
+- Mortality ~ NonWhite + Educ + JanTemp
+- Mortality ~ NonWhite + Educ + JanTemp + SO2
+- Mortality ~ NonWhite + Educ + JanTemp + SO2 + Precip
+- Mortality ~ NonWhite + Educ + JanTemp + SO2 + Precip + JulyTemp
+- Mortality ~ NonWhite + Educ + JanTemp + SO2 + Precip + JulyTemp + House
+
+And the Results
+===============
+
+```{r forward, echo = FALSE}
+summary(lm(Mortality ~ NonWhite + Educ + JanTemp + SO2 + 
+             Precip + JulyTemp + House))
+```
+
+What About Backwards Selection?
+==============================
+
+Alternately, we can start large and remove elements to refine our model:
+
+```{r backwards, echo = TRUE, results = 'hide'}
+fit <- lm(Mortality ~ Precip + Humidity + JanTemp +
+            JulyTemp + Over65 + House + Educ + Sound +
+            Density + NonWhite + WhiteCol + Poor + HC +
+            NOX + SO2, data = data)
+
+step.back <- stepAIC(fit,direction="backward",trace=TRUE)
+```
+
+The Process...
+==============
+
+- Mortality ~ Precip + Humidity + JanTemp + JulyTemp + Over65 + House + Educ + Sound + Density + NonWhite + WhiteCol + Poor + HC + NOX + SO2
+- Remove Poor
+- Remove Humidity
+- Remove WhiteCol
+- Remove Sound
+- Remove SO2
+- Remove Density
+- Mortality ~ Precip + JanTemp + JulyTemp + Over65 + House + Educ + NonWhite + HC + NOX
+
+And the Results
+===============
+
+```{r backwardsResult, echo = FALSE}
+summary(lm(Mortality ~ Precip + JanTemp + JulyTemp + Over65 + House + 
+             Educ + NonWhite + HC + NOX))
+```
+
+How do They Compare?
+===================
+
+The models end up roughly comparable and share the first 6 predictor terms. An ANOVA reveals no significant differences between the two. For parsimony, let's choose our first model.
+
+```{r stepResults, echo = TRUE, eval = FALSE}
+Mortality ~ NonWhite + Educ + JanTemp + Precip + JulyTemp + House + SO2
+
+Multiple R-squared:  0.7443,  Adjusted R-squared:  0.7099 
+F-statistic: 21.62 on 7 and 52 DF,  p-value: 2.399e-13
+
+Mortality ~ NonWhite + Educ + JanTemp + Precip + JulyTemp + House + Over65 + HC + NOX
+
+Multiple R-squared:  0.7576,  Adjusted R-squared:  0.7139 
+F-statistic: 17.36 on 9 and 50 DF,  p-value: 1.476e-12
+```
+
+```{r anova, echo = FALSE}
+fit <- lm(Mortality ~ NonWhite + Educ + JanTemp + Precip + JulyTemp + House + SO2)
+fit2 <- lm(Mortality ~ NonWhite + Educ + JanTemp + Precip + JulyTemp + House + Over65 + HC + NOX)
+anova(fit, fit2)[1:6]
+```
+
+Evaluating Our Model
+====================
+
+```{r eval, echo = FALSE}
+fit <- lm(Mortality ~ NonWhite + Educ + JanTemp + Precip + JulyTemp + House + SO2)
+plot(fitted(fit), Mortality,
+     xlab = "Predicted Mortalities",
+     ylab = "Observed Mortalities",
+     main = "Observed versus Predicted Mortalities",
+     las = 1, pch = 16, col = "dodgerblue3",
+     xlim = c(800, 1100), ylim = c(800, 1100))
+abline(a = 0, b = 1, lwd = 2)
+```
+***
+Here, a perfectly-fitted model would have every single point fall directly on the plotted line. Although we don't see that, it does look like the model does a good job predicting each city's average annual mortality rate.
+
+Evaluating Our Model
+====================
+
+We can also evaluate a plot of our residuals against our fitted values. An evenly-distributed spread indicates that the model is fairly well fitted to the data.
+***
+```{r resid, echo = FALSE}
+plot(fitted(fit), resid(fit),
+     xlab = "Predicted Mortalities",
+     ylab = "Residual",
+     main = "Predicted Mortalities versus Residuals",
+     las = 1, pch = 16, col = "dodgerblue3")
+```
+
+Interpreting Residuals
+======================
+
+<img src="./regressions-figure/residuals.jpg" />
+
+Robust Regression
+======================
+
+<img src="./regressions-figure/diagnostics.png" />
+
+Flagging High Residuals
+=======================
+
+Let's also take a look at which rows have the largest residuals:
+
+```{r cook, echo = c(1:4), results = 'asis'}
+Distance <- cooks.distance(fit)
+Resid <- stdres(fit)
+Resid <- abs(Resid)
+a <- cbind(ex1217[,1:2], Distance, Resid, ex1217[,3:17])
+a <- a[order(a$Resid, decreasing = TRUE), ]
+rownames(a) <- c(1:60)
+
+print(xtable(a[1:7, 1:4]), type = "html")
+```
+
+Using Cook's Distance
+======================
+
+We can flag any rows with a Cook's distance more than 4/n as having high leverage:
+
+```{r residuals, echo = 1:3, results = 'asis'}
+print(xtable(a[a$Distance > 4/length(a[,1]), 1:4]), type = "html")
+```
+
+Problematic Rows
+================
+
+As we saw, the four rows with unusally large Cook's distances were also among those with the highest-magnitude residuals. For illustration, we'll leave them in our model for now. Let's look at our first robust regression using Huber weights:
+
+
+```{r robust, echo = FALSE}
+rr.huber <- rlm(Mortality ~ NonWhite + Educ +
+                  JanTemp + Precip + JulyTemp +
+                  House + SO2, data = a)
+summary(rr.huber)
+```
+
+Huber Weights
+=============
+
+As we can see, a larger-magnitude residual tends to correspond to a greater downweight (i.e., the model places less importance on those values):
+
+```{r huber, echo = FALSE, results = 'asis'}
+hweights <- data.frame(City = a$CITY, Resid = abs(rr.huber$resid), Weight = rr.huber$w)
+hweights <- hweights[order(rr.huber$w), ]
+print(xtable(hweights[1:7, ]), type = "html")
+```
+
+Bisquare Weights
+================
+
+We can run a second model using bisquare weighting instead:
+
+```{r bisquare, echo = FALSE}
+rr.bisquare <- rlm(Mortality ~ NonWhite + Educ +
+                    JanTemp + Precip + JulyTemp +
+                    House + SO2, data = a, psi = psi.bisquare)
+summary(rr.bisquare)
+```
+
+Bisquare Weights
+================
+
+As we can see, although the order of the rows here is nearly the same as with our Huber weighting, the weights themselves differ fairly dramatically:
+
+```{r biweights, echo = FALSE, results = 'asis'}
+biweights <- data.frame(City = a$CITY, Resid = abs(rr.bisquare$resid),
+                        Weight = rr.bisquare$w)
+biweights <- biweights[order(rr.bisquare$w), ]
+print(xtable(biweights[1:7, ]), type = "html")
+```
+
+Choosing a Final Model
+======================
+
+Yet, do either of these robust methods provide a better predictor or mortality than our original model? Largely, no. They do a better job illustrating that two variables---JulyTemp and House---probably don't contribute that much to our model. However, beyond that, there's little difference among the three.
+
+Our Final Model
+===============
+
+Given this, we're probably safe settling on a non-weighted multiple regression without JulyTemp or House:
+
+```{r final, echo = FALSE}
+summary(final <- lm(Mortality ~ NonWhite + Educ +
+                    JanTemp + Precip + SO2))
+```
