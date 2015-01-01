@@ -146,26 +146,18 @@ data2 <- data.frame(kinase = c(rep("NSV",3),rep("RIO3",3),
 # treated as a factor
 data2$kinase <- factor(data2$kinase)
 
-# How our bars will be labeled when we graph them
-names <- c("NSV", "RIO3", "TGFa", "SKAP1", "EPHA1", "CSNK2B", "GUCY2D")
-
 # Calculate the mean for each of our kinase knock-downs
-mean <- c(mean(data2[data2$kinase=="NSV",]$PFU),
-          mean(data2[data2$kinase=="RIO3",]$PFU),
-          mean(data2[data2$kinase=="TGFa",]$PFU),
-          mean(data2[data2$kinase=="SKAP1",]$PFU),
-          mean(data2[data2$kinase=="EPHA1",]$PFU),
-          mean(data2[data2$kinase=="CSNK2B",]$PFU),
-          mean(data2[data2$kinase=="GUCY2D",]$PFU))
+mean <- aggregate(data2$PFU, list(Kinases = data2$kinase), FUN="mean")
+mean <- mean[order(match(mean$Kinases, names)), ]
 
 # And the standard error
-se <- c(sd(data2[data2$kinase=="NSV",]$PFU)/sqrt(3),
-        sd(data2[data2$kinase=="RIO3",]$PFU)/sqrt(3),
-        sd(data2[data2$kinase=="TGFa",]$PFU)/sqrt(3),
-        sd(data2[data2$kinase=="SKAP1",]$PFU)/sqrt(3),
-        sd(data2[data2$kinase=="EPHA1",]$PFU)/sqrt(3),
-        sd(data2[data2$kinase=="CSNK2B",]$PFU)/sqrt(3),
-        sd(data2[data2$kinase=="GUCY2D",]$PFU)/sqrt(3))
+se <- aggregate(data2$PFU, list(Kinases = data2$kinase), FUN=sd)
+se$x <- se$x/sqrt(3)
+se <- se[order(match(se$Kinases, names)), ]
+
+# How our bars will be labeled when we graph them
+names <- mean$Kinases
+names <- c("NSV", "RIO3", "TGFa", "SKAP1", "EPHA1", "CSNK2B", "GUCY2D")
 
 # The par() function lets us change the margins
 # so we can fit all of our data labels
@@ -176,7 +168,7 @@ plotTop <- max(1e+9)
 
 # Construct our barplot and specify some more
 # graphical parameters
-barCenters <- barplot(height = mean, names.arg=names,
+barCenters <- barplot(height = mean$x, names.arg=names,
                       col=c("darkslategray", "gray80", "black",
                             "gray40", "gray60", "white", "darkgray"),
                       space=0.25,
@@ -202,6 +194,6 @@ mtext("Lentiviral vector", side=1,
       line=3, cex.lab=2, las=1, col="black")
 
 # Lastly, the error bars
-segments(barCenters, mean-se, barCenters, mean+se, lwd=1.5)
-arrows(barCenters, mean-se, barCenters, mean+se, lwd=1.5,
+segments(barCenters, mean$x-se$x, barCenters, mean$x+se$x, lwd=1.5)
+arrows(barCenters, mean$x-se$x, barCenters, mean$x+se$x, lwd=1.5,
        angle=90, code=3, length = 0.05)
