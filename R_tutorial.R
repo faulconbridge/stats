@@ -1,24 +1,15 @@
-########################################
-# Basic R Syntax and Usage
-########################################
-
-####################
-# Constants
-####################
-
-# Constants are just what they sound
-# like: things. They don't do anything;
-# they're just static objects. They're
-# basically just shortcuts to refer
-# to larger sets of data. We assign
-# them as:
-
-myConstant <- c(1, 2, 3, 4, 5, 6)
+###############################################################################
+###############################################################################
+###
+###                         Basic R Syntax and Usage
+###
+###############################################################################
+###############################################################################
 
 
-####################
+###############################################################################
 # Vectors
-####################
+###############################################################################
 
 # Vectors are analogous to columns of
 # data in Excel. The only catch is that
@@ -42,9 +33,9 @@ characters <- c("one","two","three","four","five")
 boolean <- c(TRUE, FALSE, FALSE, FALSE, TRUE)
 
 
-####################
+###############################################################################
 # Matrices
-####################
+###############################################################################
 
 # You can think of a matrix in R as either
 # (1) a single vector split up into multiple
@@ -74,9 +65,9 @@ myMatrix <- matrix(matrixVector, nrow=4,
                        "Weight")))
 
 
-####################
+###############################################################################
 # Data frames
-####################
+###############################################################################
 
 # A data frame in R is a generalized instance
 # of a matrix: this you can truly think of as
@@ -99,9 +90,9 @@ colnames(myData) <- c("name", "age", "height", "weight",
                       "hair")
 
 
-####################
+###############################################################################
 # Factors
-####################
+###############################################################################
 
 # The variable "drugCondition" contains 20 experimental
 # trials and 20 control trials. Currently, these values
@@ -118,20 +109,49 @@ drugCondition <- c(rep("experimental",20),
 
 drugCondition <- factor(drugCondition)
 
+
 ###############################################################################
-# One-Sample t-Test Example
+###############################################################################
+###
+###                                 T-Tools
+###
+###############################################################################
 ###############################################################################
 
+
+###############################################################################
+# One-Sample t-Test
+###############################################################################
+
+# The average volume of a Douglas Fir
+# is about 39,000 cubic feet. A logging
+# company just received a shipment with
+# a mean volume of 36,500 cubic feet
+# (sd = 2,000 cubic feet). Are these
+# trees significantly smaller than
+# the average?
+
+# This ensures that any pseudo-randomizer functions
+# return the same result each time called from this
+# point
 set.seed(0)
+
+# Generate a normal distribution with mean = 36500
+# and sd = 2000 consisting of 1000 samples
 treeVolume <- c(rnorm(1000, mean = 36500, sd = 2000))
+
+# Conduct a one-sample t-test for equality of means
 t.test(treeVolume, mu = 39000)
 
+# Comstruct a frequency histogram from our data
 hist(treeVolume, freq = TRUE, density = 150, col = "dodgerblue4",
      border = "black", breaks = 15, 
      main = "Histogram of Douglas Fir Volumes",
      xlab = "Volume (cubic feet)", xlim = c(30000, 44000),
      ylim = c(0, 225))
 
+# Illustrate where the sample and population means
+# lie relative to one another
 segments(39000, 0, 39000, 225, lwd = 3,
          lty = 2)
 text(41000, 190, "Population mean")
@@ -141,8 +161,10 @@ segments(mean(treeVolume), 0, mean(treeVolume), 225,
          lwd = 3, lty = 2, col = "gray70")
 text(33500, 190, "Sample mean volume", col = "gray35")
 
+
+
 ###############################################################################
-# Paired-Samples Example
+# Paired-Samples
 ###############################################################################
 
 # Let's say that we're measuring systolic
@@ -163,19 +185,13 @@ postTreat <- c(rnorm(1000, mean = 138, sd = 8))
 # Did the treatment reduce hypertension?
 t.test(preTreat, postTreat, paired=TRUE)
 
+# Convert our data to a data frame
 bloodPressures <- data.frame(Systolic = c(preTreat, postTreat),
                              Treatment = c(rep("Pre-Treatment", 1000), 
                                            rep("Post-Treatment", 1000)))
 
-# Optional histogram using ggplot
-
-# library(ggplot2)
-# ggplot(bloodPressures, aes(x = Systolic, fill = Treatment)) +
-#   geom_bar(binwidth = 3, colour = "black", position = "identity", alpha = 0.6) + 
-#   xlim(117, 174) +
-#   xlab("Systolic Blood Pressure (mmHg)") + 
-#   ggtitle("Systolic Blood Pressure Before and After Treatment")
-
+# Graph the distributions of our data
+# before and after treatment
 x <- seq(from = 110, to = 174, by = 0.5)
 y1 <- dnorm(x, mean = 145, sd = 9)
 y2 <- dnorm(x, mean = 138, sd = 8)
@@ -199,6 +215,8 @@ text(x = 120, y = 0.04, " - Post-Treatment BP", col = "firebrick3", cex = 0.9)
 points(109, 0.0445, pch = 15, col = "dodgerblue4")
 points(109, 0.0395, pch = 15, col = "firebrick3")
 
+
+
 ###############################################################################
 # Equality of Variance
 ###############################################################################
@@ -210,9 +228,17 @@ leveneTest(bloodPressures$Systolic, bloodPressures$Treatment)
 # Or:
 var.test(preTreat, postTreat)
 
+
+
 ###############################################################################
-# Implementation in R
+# Independent-groups t-tests
 ###############################################################################
+
+# Let's look at annual healthcare spending
+# in Cleveland, OH and New York, NY. Is there
+# a significant difference in the healthcare
+# spending patterns between the two cities?
+
 
 # Independent 2-group t-test
 # where y1 and y2 are numeric
@@ -231,17 +257,7 @@ t.test(spending~city, var.equal=TRUE)
 # Equal variances not assumed
 t.test(ClevelandSpending, NYSpending, var.equal=FALSE)
 
-# Paired-samples t-test
-# where y1 & y2 are numeric
-set.seed(2820)
-preTreat <- c(rnorm(1000, mean = 145, sd = 9))
-postTreat <- c(rnorm(1000, mean = 138, sd = 8))
-t.test(preTreat, postTreat, paired=TRUE)
 
-# One-sample t-test
-set.seed(0)
-treeVolume <- c(rnorm(75, mean = 36500, sd = 2000))
-t.test(treeVolume, mu = 39000) # Ho: mu = 39000
 
 ########################################
 # Plotting group means with error bars
@@ -266,6 +282,9 @@ data2 <- data.frame(kinase = c(rep("NSV",3),rep("RIO3",3),
 # treated as a factor
 data2$kinase <- factor(data2$kinase)
 
+# How our bars will be labeled when we graph them
+names <- c("NSV", "RIO3", "TGFa", "SKAP1", "EPHA1", "CSNK2B", "GUCY2D")
+
 # Calculate the mean for each of our kinase knock-downs
 mean <- aggregate(data2$PFU, list(Kinases = data2$kinase), FUN="mean")
 mean <- mean[order(match(mean$Kinases, names)), ]
@@ -274,10 +293,6 @@ mean <- mean[order(match(mean$Kinases, names)), ]
 se <- aggregate(data2$PFU, list(Kinases = data2$kinase), FUN=sd)
 se$x <- se$x/sqrt(3)
 se <- se[order(match(se$Kinases, names)), ]
-
-# How our bars will be labeled when we graph them
-names <- mean$Kinases
-names <- c("NSV", "RIO3", "TGFa", "SKAP1", "EPHA1", "CSNK2B", "GUCY2D")
 
 # The par() function lets us change the margins
 # so we can fit all of our data labels
@@ -318,8 +333,18 @@ segments(barCenters, mean$x-se$x, barCenters, mean$x+se$x, lwd=1.5)
 arrows(barCenters, mean$x-se$x, barCenters, mean$x+se$x, lwd=1.5,
        angle=90, code=3, length = 0.05)
 
+
 ###############################################################################
-# Scatterplot Example
+###############################################################################
+###
+###                                 Correlation
+###
+###############################################################################
+###############################################################################
+
+
+###############################################################################
+# Scatterplots
 ###############################################################################
 
 # Download our data: US estimated populations from
@@ -339,6 +364,7 @@ View(population)
 plot(population$Year, population$Est..US.Population/1000000,
      xlab="Year", ylab="Population (Millions)", main="U.S. Population by Year",
      pch = 16, col = "dodgerblue4", cex.main = 0.9)
+
 
 ###############################################################################
 # Scatterplot with Categorical Indicators
@@ -396,7 +422,7 @@ text(x = 7, y = 3, "Severe bipolar", col = "dodgerblue4")
 
 
 ###############################################################################
-# Correlation Example
+# Correlation 
 ###############################################################################
 
 download.file(
@@ -410,7 +436,7 @@ cor.test(bodyFat$Neck, bodyFat$Chest)
 
 
 ###############################################################################
-# Correlation Matrix Example
+# Correlation Matrix 
 ###############################################################################
 
 # Treat the matrix of cross-correlations
@@ -431,7 +457,7 @@ pairs(~Neck+Chest+Abdomen+Hip+Thigh, data=bodyFat, upper.panel=NULL)
 
 
 ###############################################################################
-# Partial Correlation Example
+# Partial Correlation 
 ###############################################################################
 
 # There aren't any official R packages for
@@ -450,7 +476,7 @@ pcor.test(neck,chest,others)
 
 
 ###############################################################################
-# Linearity Example
+# Linearity 
 ###############################################################################
 
 # All of the four graphs output have
@@ -479,7 +505,7 @@ for(i in 1:4) {
 }
 
 ###############################################################################
-# Distribution Example
+# Truncated Distributions 
 ###############################################################################
 
 # If you are working with a bounded
@@ -511,112 +537,11 @@ text(-2, 2.0, "r = 0.387", col="blue")
 
 ###############################################################################
 ###############################################################################
-###
-###                            Hubble Example
-###
-###############################################################################
-###############################################################################
-
-###############################################################################
-# Input data
-###############################################################################
-
-# Body name
-object <- c("S.Mag.","L.Mag.","N.G.C. 6822","N.G.C. 598",
-            "N.G.C. 221","N.G.C. 224","N.G.C. 5457","N.G.C. 4763",
-            "N.G.C. 5194","N.G.C. 4449","N.G.C. 4214","N.G.C. 3031",
-            "N.G.C. 3627","N.G.C. 4826","N.G.C. 5236","N.G.C. 1068",
-            "N.G.C. 5055","N.G.C. 7331","N.G.C. 4258","N.G.C. 4151",
-            "N.G.C. 4382","N.G.C. 4472","N.G.C. 4486","N.G.C. 4649")
-
-# Distance from Earth in megaparsecs
-distance <- c(0.032,0.034,0.214,0.263,0.275,0.275,0.45,0.5,
-              0.5,0.63,0.8,0.9,0.9,0.9,0.9,1.0,1.1,1.1,
-              1.4,1.7,2.0,2.0,2.0,2.0)
-
-# Recession velocity from Earth in Km/sec
-velocity <- c(170,290,-130,-70,-185,-220,200,290,270,
-              200,300,-30,650,150,500,920,450,500,
-              500,960,500,850,800,1090)
-
-###############################################################################
-# Plot with ggplot2
-###############################################################################
-
-library(ggplot2)
-hubble <- data.frame(object,distance,velocity)
-
-fit <- lm(hubble$distance~hubble$velocity)
-
-hubble <- data.frame(hubble, predict(fit, interval = 'prediction'))
-
-ggplot(hubble, aes(x = velocity, y = distance)) +
-  geom_smooth(method = 'lm', aes(fill = 'confidence'), alpha = 1.0) +
-  geom_point(colour = 'black', size = 3) +
-  labs(x ="Recession Velocity (km/sec)",
-       y ="Distance (megaparsecs)",
-       title ="Measured distance versus velocity
-       for 24 extra-galactic nebulae") +
-  theme(legend.position = "none")
-
-###############################################################################
-# Plot data
-###############################################################################
-
-plotCI <- function (x, y, xlab, ylab, main) {
-  plot(x, y, pch = 16, col = "dodgerblue4",
-       xlab = xlab, ylab = ylab,
-       main = main, cex.main = 0.8,
-       cex.axis = 0.8, cex.lab = 0.9,
-       las = 1, xlim = c(min(x), max(x)),
-       ylim = c(min(y), max(y)))
-  
-  fit <- lm(y~x)
-  summary(fit)
-  
-  abline(fit, col = "dodgerblue4")
-  
-  CI <- predict(fit, interval = "confidence")
-  
-  cint <- data.frame(x, lower = CI[,2], upper = CI[,3])
-  cint <- cint[order(x),]
-  with(cint, points(x, lower, type = "l",
-                    col = "firebrick3", lwd = 2))
-  with(cint, points(x, upper, type = "l",
-                    col = "firebrick3", lwd = 2))
-}
-
-plotCI(x = velocity, y = distance,
-       xlab = "Recession Velocity (km/sec)",
-       ylab = "Distance (megaparsecs)",
-       main = "Measured distance versus velocity")
-
-###############################################################################
-# Specify Model
-###############################################################################
-
-fit <- lm(distance ~ velocity)
-summary(fit)
-
-plot(fitted(fit), resid(fit),
-     xlab = "Predicted Distances (Megaparsecs)",
-     ylab = "Residuals",
-     main = "Residuals by Fitted Values",
-     las = 1, pch = 16, col = "dodgerblue4",
-     xlim = c(0,2), ylim = c(-1,1))
-
-
-
-
-###############################################################################
-###############################################################################
 ##
-## Regression background: least squares, residuals, diagnostics
+##                         Simple Linear Regression
 ##
 ###############################################################################
 ###############################################################################
-
-
 
 
 ###############################################################################
@@ -628,6 +553,7 @@ library(animation)
 
 oopt = ani.options(interval = 0.3, nmax = ifelse(interactive(), 50, 2))
 least.squares()
+
 
 ###############################################################################
 # LS static for print
@@ -661,6 +587,7 @@ text(3, 11, "Residual difference", col="red")
 text(3, 12.5, "Line of best fit", col="gray")
 text(3, 14, "Possible line of fit", col="black", adj=NULL)
 
+
 ###############################################################################
 # Explained variance
 ###############################################################################
@@ -686,8 +613,9 @@ segments(x, b * x + a, x, y, col = v.col, lty = v.lty, lwd = v.lwd)
 
 text(2.5, 25, "R-squared = 0.39")
 
+
 ###############################################################################
-# Residual
+# Residuals
 ###############################################################################
 
 x <- c(0.5, 1.4, 2.5, 3)
@@ -743,6 +671,7 @@ plotResid <- function(i) {
 
 plotResid(2)
 
+
 ###############################################################################
 # Sum of Squares
 ###############################################################################
@@ -772,9 +701,23 @@ rect(x, y, x + ((a+b*x)-y), a+b*x,
 text(1.25, 3.25, "Residual Sum of Squares", col = "blue", cex = 0.75)
 points(x,y, pch = 16)
 
+
 ###############################################################################
 # Residual Plots
 ###############################################################################
+
+# Typical patterns for biased
+# and unbiased, heteroscedastic and
+# homoscedastic residuals. Heteroscedasticity
+# means that not all observations in
+# a sample or population have the same
+# variance and usually indicates that the
+# data should be transformed. A residual
+# plot is biased if the fitted values at
+# any given value of the residual do not
+# average out to be 0 and generally
+# indicates that you have a poorly
+# fitted model.
 
 residPlot <- function(x, y, main) {
   plot(x, y, yaxt="n",xaxt="n",
@@ -830,6 +773,140 @@ fitted <- -1*(resid^2+rnorm(100, mean = 0, sd = 1.5))
 residPlot(-1*resid, fitted, main = "Biased and Heteroscedastic")
 curve(-((x+0.5)^2+3), -3, 3, add = TRUE, lwd = 3, col = "lightsteelblue2")
 curve(-((x-0.5)^2-3), -3, 3, add = TRUE, lwd = 3, col = "lightsteelblue2")
+
+
+###############################################################################
+# Simple Linear Regression
+###############################################################################
+
+# This example uses data from Hubble, E. (1929).
+# ``A relation between distance and radial
+# velocity among extra-galactic nebulae.''
+# Proceedings of the National Academy of
+# Sciences of the United States of America,
+# 15, 168-173.
+#
+#
+# These data are what were used to lend
+# support to the Big Bang theory.
+# Isn't that kinda nifty?
+#
+# The idea is that if a galaxy were moving in
+# approximately the same direction as ours,
+# then (1) it would be moving faster than ours;
+# (2) ours would be moving faster than it;
+# or (3) they would be moving at approximately
+# the same speeds. In either case 1 or 2, this
+# would result in the two galaxies moving further
+# apart. In the third case, as long as the two
+# are not moving in exactly the same direction
+# (i.e., θ != 0 where θ is the interior angle
+# between the trajectories of the two galaxies),
+# we will also continue to move farther apart
+# (but at a slower rate). And of course if the
+# galaxies are moving in opposite directions,
+# their recession velocity will be greater still.
+#
+# The moral here? If the Big Bang is true, the
+# farther apart two galaxies are, the faster
+# they are moving away from one another.
+
+# Body name
+object <- c("S.Mag.","L.Mag.","N.G.C. 6822","N.G.C. 598",
+            "N.G.C. 221","N.G.C. 224","N.G.C. 5457","N.G.C. 4763",
+            "N.G.C. 5194","N.G.C. 4449","N.G.C. 4214","N.G.C. 3031",
+            "N.G.C. 3627","N.G.C. 4826","N.G.C. 5236","N.G.C. 1068",
+            "N.G.C. 5055","N.G.C. 7331","N.G.C. 4258","N.G.C. 4151",
+            "N.G.C. 4382","N.G.C. 4472","N.G.C. 4486","N.G.C. 4649")
+
+# Distance from Earth in megaparsecs
+distance <- c(0.032,0.034,0.214,0.263,0.275,0.275,0.45,0.5,
+              0.5,0.63,0.8,0.9,0.9,0.9,0.9,1.0,1.1,1.1,
+              1.4,1.7,2.0,2.0,2.0,2.0)
+
+# Recession velocity from Earth in Km/sec
+velocity <- c(170,290,-130,-70,-185,-220,200,290,270,
+              200,300,-30,650,150,500,920,450,500,
+              500,960,500,850,800,1090)
+
+########################################
+# Plot with ggplot2
+########################################
+
+library(ggplot2)
+hubble <- data.frame(object,distance,velocity)
+
+fit <- lm(hubble$distance~hubble$velocity)
+
+hubble <- data.frame(hubble, predict(fit, interval = 'prediction'))
+
+ggplot(hubble, aes(x = velocity, y = distance)) +
+  geom_smooth(method = 'lm', aes(fill = 'confidence'), alpha = 1.0) +
+  geom_point(colour = 'black', size = 3) +
+  labs(x ="Recession Velocity (km/sec)",
+       y ="Distance (megaparsecs)",
+       title ="Measured distance versus velocity
+       for 24 extra-galactic nebulae") +
+  theme(legend.position = "none")
+
+########################################
+# Plot data with built-in functions
+########################################
+
+plotCI <- function (x, y, xlab, ylab, main) {
+  plot(x, y, pch = 16, col = "dodgerblue4",
+       xlab = xlab, ylab = ylab,
+       main = main, cex.main = 0.8,
+       cex.axis = 0.8, cex.lab = 0.9,
+       las = 1, xlim = c(min(x), max(x)),
+       ylim = c(min(y), max(y)))
+  
+  fit <- lm(y~x)
+  summary(fit)
+  
+  abline(fit, col = "dodgerblue4")
+  
+  CI <- predict(fit, interval = "confidence")
+  
+  cint <- data.frame(x, lower = CI[,2], upper = CI[,3])
+  cint <- cint[order(x),]
+  with(cint, points(x, lower, type = "l",
+                    col = "firebrick3", lwd = 2))
+  with(cint, points(x, upper, type = "l",
+                    col = "firebrick3", lwd = 2))
+}
+
+plotCI(x = velocity, y = distance,
+       xlab = "Recession Velocity (km/sec)",
+       ylab = "Distance (megaparsecs)",
+       main = "Measured distance versus velocity")
+
+########################################
+# Specify Model
+########################################
+
+fit <- lm(distance ~ velocity)
+
+# Look at the results of our model
+summary(fit)
+
+# Some basic residual diagnostics
+plot(fitted(fit), resid(fit),
+     xlab = "Predicted Distances (Megaparsecs)",
+     ylab = "Residuals",
+     main = "Residuals by Fitted Values",
+     las = 1, pch = 16, col = "dodgerblue4",
+     xlim = c(0,2), ylim = c(-1,1))
+
+
+###############################################################################
+###############################################################################
+###
+###                            ANOVAs
+###
+###############################################################################
+###############################################################################
+
 
 ###############################################################################
 # One-Way ANOVA
