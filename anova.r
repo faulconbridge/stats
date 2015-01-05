@@ -50,5 +50,60 @@ barplot(means$Income, names.arg = means$Education,
         main = "Income by Education", col = colors)
 
 ###############################################################################
-# Two-Way ANOVA
+# Two-Way ANOVA (Between-measures)
+###############################################################################
+
+# Download our data file
+download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/ex1319.csv",
+              "IQ.csv", "wget", extra="--no-check-certificate")
+
+# Read data and view it
+IQ <- read.csv("IQ.csv", header = TRUE)
+View(IQ)
+
+# Convert Adoptive and Biological to factors
+IQ <- within(IQ, {
+  Adoptive <- factor(Adoptive)
+  Biological <- factor(Biological)
+})
+
+# Specify a model without testing for interactions
+model2 <- aov(IQ ~ Adoptive + Biological, data = IQ)
+summary(model2)
+
+# Specify a model testing for interactions
+model3 <- aov(IQ ~ Adoptive * Biological, data = IQ)
+summary(model3)
+
+# Construct a boxplot of child IQ by, respectively,
+# biological and adoptive parent IQ
+par(mfrow=c(1,2))
+plot(IQ ~ Adoptive + Biological, data=IQ)
+
+# Construct an interaction plot
+par(mfrow=c(1,1))
+with(IQ, interaction.plot(Adoptive, Biological, IQ))
+
+# Compute groupwise means for a barplot
+means <- aggregate(IQ$IQ,
+                   by=list(IQ$Adoptive, IQ$Biological),
+                   FUN="mean")
+colnames(means) <- c("Adoptive", "Biological", "IQ")
+
+# Convert to matrix representation for ease of graphing
+means <- matrix(data = means $IQ, nrow=2, ncol=2,
+                dimnames = list(c("High Biological","Low Biological"),
+                                c("High Adoptive","Low Adoptive")))
+
+# Construct bar plot
+par(mar =  c(5, 4, 4, 2))
+barplot(means, beside=TRUE, xlab = "Parent IQs",
+        ylab = "Child's IQ", ylim = c(0, 120),
+        main = "Child by Biological\n and Adoptive Parent IQ",
+        legend = rownames(means),
+        args.legend = list(x = ncol(means) + 4,
+                           y = ncol(means) + 150))
+
+###############################################################################
+# Two-Way ANOVA (Repeated-measures)
 ###############################################################################
