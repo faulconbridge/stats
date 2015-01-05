@@ -229,7 +229,6 @@ leveneTest(bloodPressures$Systolic, bloodPressures$Treatment)
 var.test(preTreat, postTreat)
 
 
-
 ###############################################################################
 # Independent-groups t-tests
 ###############################################################################
@@ -256,7 +255,6 @@ t.test(spending~city, var.equal=TRUE)
 # Independent 2-group t-test
 # Equal variances not assumed
 t.test(ClevelandSpending, NYSpending, var.equal=FALSE)
-
 
 
 ########################################
@@ -551,7 +549,7 @@ text(-2, 2.0, "r = 0.387", col="blue")
 install.packages("animation")
 library(animation)
 
-oopt = ani.options(interval = 0.3, nmax = ifelse(interactive(), 50, 2))
+oopt = ani.options(interval = 0.3, nmax = ifelse(interactive(), 15, 2))
 least.squares()
 
 
@@ -774,6 +772,9 @@ residPlot(-1*resid, fitted, main = "Biased and Heteroscedastic")
 curve(-((x+0.5)^2+3), -3, 3, add = TRUE, lwd = 3, col = "lightsteelblue2")
 curve(-((x-0.5)^2-3), -3, 3, add = TRUE, lwd = 3, col = "lightsteelblue2")
 
+layout(matrix(c(1),1,1))
+par(mar=c(5,4,4,2))
+
 
 ###############################################################################
 # Simple Linear Regression
@@ -988,7 +989,9 @@ summary(model3)
 # Construct a boxplot of child IQ by, respectively,
 # biological and adoptive parent IQ
 par(mfrow=c(1,2))
-plot(IQ ~ Adoptive + Biological, data=IQ)
+plot(IQ ~ Adoptive + Biological, data=IQ,
+     col = c("dodgerblue1","firebrick3"),
+     main = "Child's IQ by Adoptive\n and Biological Parents'")
 
 # Construct an interaction plot
 par(mfrow=c(1,1))
@@ -1001,7 +1004,7 @@ means <- aggregate(IQ$IQ,
 colnames(means) <- c("Adoptive", "Biological", "IQ")
 
 # Convert to matrix representation for ease of graphing
-means <- matrix(data = means $IQ, nrow=2, ncol=2,
+means <- matrix(data = means$IQ, nrow=2, ncol=2,
                 dimnames = list(c("High Biological","Low Biological"),
                                 c("High Adoptive","Low Adoptive")))
 
