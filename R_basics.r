@@ -65,11 +65,13 @@ matrixVector <- c(21, 5.9, 147,
                   28, 5.7, 168,
                   18, 5.5, 126,
                   24, 6.1, 195)
-myMatrix <- matrix(matrixVector, nrow=4, ncol=3,
-                   byrow=TRUE,
-                   dimnames=list(c("Chris", "John",
-                                   "Amy", "Max"),
-                   c("Age", "Height", "Weight")))
+myMatrix <- matrix(matrixVector, nrow=4,
+                   ncol=3, byrow=TRUE,
+                   dimnames=list(
+                     c("Chris", "John",
+                       "Amy", "Max"),
+                     c("Age", "Height",
+                       "Weight")))
 
 
 ####################
