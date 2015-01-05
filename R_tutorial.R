@@ -437,7 +437,7 @@ pairs(~Neck+Chest+Abdomen+Hip+Thigh, data=bodyFat, upper.panel=NULL)
 # There aren't any official R packages for
 # partial correlation, so we'll use a function
 # from Soojin Yi (http://www.yilab.gatech.edu/)
-source("https://raw.githubusercontent.com/faulconbridge/stats/master/pcor.R")
+source("https://raw.githubusercontent.com/faulconbridge/stats/master/scripts/pcor.r")
 
 # Compute partial correlation between
 # neck and chest circumferences, controlling
@@ -836,7 +836,7 @@ curve(-((x-0.5)^2-3), -3, 3, add = TRUE, lwd = 3, col = "lightsteelblue2")
 ###############################################################################
 
 # Download our data file
-download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/ex0525.csv",
+download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/data/ex0525.csv",
               "educationData.csv", "wget", extra="--no-check-certificate")
 
 # Read data and view it
@@ -887,7 +887,7 @@ barplot(means$Income, names.arg = means$Education,
 ###############################################################################
 
 # Download our data file
-download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/ex1319.csv",
+download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/data/ex1319.csv",
               "IQ.csv", "wget", extra="--no-check-certificate")
 
 # Read data and view it
@@ -942,7 +942,7 @@ barplot(means, beside=TRUE, xlab = "Parent IQs",
 ###############################################################################
 
 # Download our data
-download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/satiation.csv",
+download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/data/satiation.csv",
               "satiation.csv", "wget", extra="--no-check-certificate")
 
 # Attach as a data frame

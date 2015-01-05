@@ -117,7 +117,7 @@ pairs(~Neck+Chest+Abdomen+Hip+Thigh, data=bodyFat, upper.panel=NULL)
 # There aren't any official R packages for
 # partial correlation, so we'll use a function
 # from Soojin Yi (http://www.yilab.gatech.edu/)
-source("https://raw.githubusercontent.com/faulconbridge/stats/master/pcor.R")
+source("https://raw.githubusercontent.com/faulconbridge/stats/master/scripts/pcor.R")
 
 # Compute partial correlation between
 # neck and chest circumferences, controlling

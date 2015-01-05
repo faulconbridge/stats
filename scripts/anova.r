@@ -3,7 +3,7 @@
 ###############################################################################
 
 # Download our data file
-download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/ex0525.csv",
+download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/data/ex0525.csv",
               "educationData.csv", "wget", extra="--no-check-certificate")
 
 # Read data and view it
@@ -54,7 +54,7 @@ barplot(means$Income, names.arg = means$Education,
 ###############################################################################
 
 # Download our data file
-download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/ex1319.csv",
+download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/data/ex1319.csv",
               "IQ.csv", "wget", extra="--no-check-certificate")
 
 # Read data and view it
@@ -109,7 +109,7 @@ barplot(means, beside=TRUE, xlab = "Parent IQs",
 ###############################################################################
 
 # Download our data
-download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/satiation.csv",
+download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/data/satiation.csv",
               "satiation.csv", "wget", extra="--no-check-certificate")
 
 # Attach as a data frame
