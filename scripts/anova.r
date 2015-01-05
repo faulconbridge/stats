@@ -107,3 +107,52 @@ barplot(means, beside=TRUE, xlab = "Parent IQs",
 ###############################################################################
 # Two-Way ANOVA (Repeated-measures)
 ###############################################################################
+
+# Download our data
+download.file("https://raw.githubusercontent.com/faulconbridge/stats/master/satiation.csv",
+              "satiation.csv", "wget", extra="--no-check-certificate")
+
+# Attach as a data frame
+satiation <- read.csv("satiation.csv", header = TRUE)
+
+# Omit null response values
+satiation <- na.omit(satiation)
+
+# Omit irrelevant values (filler items)
+satiation <- satiation[!satiation$BIAS=="filler",]
+
+# Specify factors
+satiation <- within(satiation, {
+  BIAS <- factor(BIAS)
+  REPS <- factor(REPS)
+  RELATEDNESS <- factor(RELATEDNESS)
+  PID <- factor(PID)
+})
+
+# Compute groupwise means
+satiationMeans <- aggregate(satiation$MS,
+                            by = list(satiation$PID, satiation$BIAS,
+                                      satiation$REPS, satiation$RELATEDNESS),
+                            FUN = "mean")
+
+# Name the columns usefully
+colnames(satiationMeans) <- c("PID", "BIAS", "REPS", "RELATEDNESS", "MS")
+View(satiationMeans)
+
+# Specify our model. Each within-terms factor
+# must also be included in the error term
+# as seen below
+model4 <- aov(MS ~ REPS * RELATEDNESS * BIAS
+              + Error(PID / (REPS * RELATEDNESS * BIAS)),
+              data = satiationMeans)
+summary(model4)
+
+# Construct interaction plots for our data
+par(mfrow=c(3,2))
+par(mar = c(2,4,2,5))
+with(satiation, interaction.plot(REPS, RELATEDNESS, MS))
+with(satiation, interaction.plot(RELATEDNESS, REPS, MS))
+with(satiation, interaction.plot(BIAS, REPS, MS))
+with(satiation, interaction.plot(REPS, BIAS, MS))
+with(satiation, interaction.plot(RELATEDNESS, BIAS, MS))
+with(satiation, interaction.plot(BIAS, RELATEDNESS, MS))
