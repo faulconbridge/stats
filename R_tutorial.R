@@ -536,7 +536,7 @@ pairs(~Neck+Chest+Abdomen+Hip+Thigh, data=bodyFat, upper.panel=NULL)
 # There aren't any official R packages for
 # partial correlation, so we'll use a function
 # from Soojin Yi (http://www.yilab.gatech.edu/)
-source("https://raw.githubusercontent.com/faulconbridge/stats/master/scripts/pcor.r")
+source("http://www.yilab.gatech.edu/pcor.R")
 
 # Compute partial correlation between
 # neck and chest circumferences, controlling
@@ -1206,6 +1206,7 @@ barData <- matrix(data = satiationMeans$MS,
 
 # Reset plot margins
 par(mar =  c(5, 4, 4, 2))
+layout(matrix(c(1),1,1))
 
 # Make a shitty-looking bar graph
 barCenters <- barplot(barData, beside=TRUE, xlab = "Word Repetitions",
