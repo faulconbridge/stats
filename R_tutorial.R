@@ -244,6 +244,32 @@ var.test(preTreat, postTreat)
 set.seed(0)
 ClevelandSpending <- rnorm(50, mean = 250, sd = 75)
 NYSpending <- rnorm(50, mean = 300, sd = 80)
+
+# Visualize per-patient medicare spending
+# For both Cleveland and NYC
+hist(ClevelandSpending, freq = FALSE,
+     xlim = c(0,500), ylim = c(0,0.008),
+     col = "firebrick2", density = 75,
+     border = "black", breaks = 10,
+     main = "Medicare Spending Per Patient By City",
+     xlab = "Spending Per Patient",
+     ylab = "Relative Frequency",
+     cex.main = 0.8, cex.lab = 0.9,
+     cex.axis = 0.8, las = 1)
+
+hist(NYSpending, add = TRUE,
+     freq = FALSE, breaks = 7,
+     col = "dodgerblue3", density = 75,
+     border = "black")
+
+text(x = 50, y = 0.008,
+     "Cleveland (M=251)", col = "firebrick2",
+     cex = 1)
+text(x = 50, y = 0.007,
+     "New York (M=301)", col = "dodgerblue3",
+     cex = 1)
+
+# Conduct our t-test
 t.test(ClevelandSpending, NYSpending, var.equal=TRUE)
 
 # Independent 2-group t-test
