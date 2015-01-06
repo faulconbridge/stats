@@ -19,12 +19,21 @@
 
 # NOTE: We use the notation OBJECT <- DATA
 # to tell R to assign data to a variable.
-# This way, we can type in, for example,
-# myNumbers and R will know what data
+# This way, we can call, for example,
+# ``myNumbers'' and R will know what data
 # we're talking about.
 
+# Construct our vector containing the numbers
+# 1 - 10
 myNumbers <- c(seq(from=1, to=10, by=1))
+
+# Call the vector we just created
+myNumbers
+
+# An alternate way to construct the same
+# vector
 moreNumbers <- c(1,2,3,4,5,6,7,8,9,10)
+moreNumbers
 
 # a character vector:
 characters <- c("one","two","three","four","five")
@@ -52,17 +61,26 @@ boolean <- c(TRUE, FALSE, FALSE, FALSE, TRUE)
 # myMatrix <- matrix(vector, nrow=r, ncol=c, byrow=FALSE, 
 #      dimnames=list(c("rownames"), c("colnames"))
 
+# Start with a vector of length 12. This
+# contains age, height, and weight data
+# for four individuals
 matrixVector <- c(21, 5.9, 147,
                   28, 5.7, 168,
                   18, 5.5, 126,
                   24, 6.1, 195)
+
+# Now we'll convert it into a matrix
+# representation
 myMatrix <- matrix(matrixVector, nrow=4,
                    ncol=3, byrow=TRUE,
                    dimnames=list(
-                     c("Chris", "John",
+                     c("Megan", "John",
                        "Amy", "Max"),
                      c("Age", "Height",
                        "Weight")))
+
+# Let's see the final product
+myMatrix
 
 
 ###############################################################################
@@ -79,16 +97,25 @@ myMatrix <- matrix(matrixVector, nrow=4,
 # in a column for hair color, we would do
 # something like:
 
-name <- c("Chris", "John", "Amy", "Max")
-age <- c(21, 28, 18, 24)
+# We'll start with several vectors, each
+# representing a single variable
+name   <- c("Chris", "John", "Amy", "Max")
+age    <- c(21, 28, 18, 24)
 height <- c(5.9, 5.7, 5.5, 6.1)
 weight <- c(147, 168, 126, 195)
-hair <- c("brown", "blonde", "red", "brown")
+hair   <- c("brown", "blonde", "red", "brown")
 
+# Now we'll concatenate those vectors into
+# a single data frame
 myData <- data.frame(name, age, height, weight, hair)
+
+# And we'll name each of the columns to
+# avoid confusion down the road
 colnames(myData) <- c("name", "age", "height", "weight",
                       "hair")
 
+# Let's view the final product
+View(myData)
 
 ###############################################################################
 # Factors
@@ -102,12 +129,14 @@ colnames(myData) <- c("name", "age", "height", "weight",
 
 drugCondition <- c(rep("experimental",20),
                    rep("control",20))
+str(drugCondition)
 
 # We will now convert the elements to factors.
 # If you run str(drugCondition) again, you should see:
 # Factor w/ 2 levels "control","experimental"
 
 drugCondition <- factor(drugCondition)
+str(drugCondition)
 
 
 ###############################################################################
@@ -141,6 +170,7 @@ set.seed(0)
 treeVolume <- c(rnorm(1000, mean = 36500, sd = 2000))
 
 # Conduct a one-sample t-test for equality of means
+# You should end up with t = -40; p-value < 0.001
 t.test(treeVolume, mu = 39000)
 
 # Comstruct a frequency histogram from our data
@@ -183,6 +213,7 @@ preTreat <- c(rnorm(1000, mean = 145, sd = 9))
 postTreat <- c(rnorm(1000, mean = 138, sd = 8))
 
 # Did the treatment reduce hypertension?
+# You should see t = 19; p-value < 0.001
 t.test(preTreat, postTreat, paired=TRUE)
 
 # Convert our data to a data frame
@@ -192,26 +223,40 @@ bloodPressures <- data.frame(Systolic = c(preTreat, postTreat),
 
 # Graph the distributions of our data
 # before and after treatment
+
+# Range of x values for plotting
 x <- seq(from = 110, to = 174, by = 0.5)
+
+# Relative frequency of each observation
+# taken from a normal distribution
 y1 <- dnorm(x, mean = 145, sd = 9)
 y2 <- dnorm(x, mean = 138, sd = 8)
+
+# Construct the plot axes, pre-treat
+# density curve
 plot(x, y1, type="l", lwd=2, col="red",
      main="Systolic Blood Pressure Before and After Treatment",
      xlab = "Systolic Blood Pressure (mmHg)",
      ylab = "Frequency", yaxt="n",
      xlim = c(110, 175), ylim = c(0, 0.05))
+
+# Plot post-treat density curve
 lines(x, y2)
+
+# Fill density curves for pre- and post-treat
 polygon(c(110,x,175),c(0,y2,0), col="firebrick3", density = 100,
         border = "black")
 polygon(c(117,x,175),c(0,y1,0), col="dodgerblue4", density = 100,
         border = "black")
 
+# Y-axis tic marks
 ylab=c(seq(from=0, to=175, by=25))
 y=c(seq(from=0, to=0.05, length.out = 8))
 axis(2,at=y,labels=ylab)
 
-text(x = 120, y = 0.045, "- Pre-Treatment BP", col = "dodgerblue4", cex = 0.9)
-text(x = 120, y = 0.04, " - Post-Treatment BP", col = "firebrick3", cex = 0.9)
+# Plot legend
+text(x = 117, y = 0.045, "- Pre-Treatment BP", col = "dodgerblue4", cex = 0.9)
+text(x = 117, y = 0.04, " - Post-Treatment BP", col = "firebrick3", cex = 0.9)
 points(109, 0.0445, pch = 15, col = "dodgerblue4")
 points(109, 0.0395, pch = 15, col = "firebrick3")
 
@@ -233,7 +278,7 @@ var.test(preTreat, postTreat)
 # Independent-groups t-tests
 ###############################################################################
 
-# Let's look at annual healthcare spending
+# Let's look at per-patient Medicare spending
 # in Cleveland, OH and New York, NY. Is there
 # a significant difference in the healthcare
 # spending patterns between the two cities?
@@ -257,11 +302,13 @@ hist(ClevelandSpending, freq = FALSE,
      cex.main = 0.8, cex.lab = 0.9,
      cex.axis = 0.8, las = 1)
 
+# Add histogram for NY spending
 hist(NYSpending, add = TRUE,
      freq = FALSE, breaks = 7,
      col = "dodgerblue3", density = 75,
      border = "black")
 
+# Add plot legend
 text(x = 50, y = 0.008,
      "Cleveland (M=251)", col = "firebrick2",
      cex = 1)
@@ -283,9 +330,9 @@ t.test(spending~city, var.equal=TRUE)
 t.test(ClevelandSpending, NYSpending, var.equal=FALSE)
 
 
-########################################
+###############################################################################
 # Plotting group means with error bars
-########################################
+###############################################################################
 
 # Our initial data with kinase name and
 # plaque forming units per mL
@@ -361,7 +408,7 @@ arrows(barCenters, mean$x-se$x, barCenters, mean$x+se$x, lwd=1.5,
 ###############################################################################
 ###############################################################################
 ###
-###                                 Correlation
+###                               Correlation
 ###
 ###############################################################################
 ###############################################################################
@@ -385,9 +432,10 @@ View(population)
 
 # Construct a scatterplot of population (y-axis)
 # by year (x-axis)
+par(mar = c(5,4,4,2))
 plot(population$Year, population$Est..US.Population/1000000,
      xlab="Year", ylab="Population (Millions)", main="U.S. Population by Year",
-     pch = 16, col = "dodgerblue4", cex.main = 0.9)
+     pch = 16, col = "dodgerblue4", cex.main = 1)
 
 
 ###############################################################################
@@ -444,6 +492,7 @@ text(x = 7, y = 5.5, "Mild bipolar", col = "dodgerblue")
 text(x = 7, y = 4.25, "Moderate bipolar", col = "dodgerblue2")
 text(x = 7, y = 3, "Severe bipolar", col = "dodgerblue4")
 
+par(mar = c(5,4,4,2))
 
 ###############################################################################
 # Correlation 
@@ -540,6 +589,7 @@ for(i in 1:4) {
 # largely uninterpretable
 
 layout(matrix(1),1,1)
+par(mar = c(5,4,4,1))
 set.seed(0)
 
 r <- 0.9
@@ -707,6 +757,7 @@ fit <- coef(lm(y ~ x))
 a <- fit[1]
 b <- fit[2]
 
+par(mar = c(5,4,4,2))
 layout(matrix(c(1,2),1,2))
 
 plot(x, y, pch = 16, main = "Simple Average of Y",
@@ -971,8 +1022,17 @@ means <- aggregate(educationData$Income2005,
                    by=list(educationData$Educ),
                    FUN="mean")
 
+# Compute standard deviation for each group
+means$sd <- aggregate(educationData$Income2005,
+                      by=list(educationData$Educ),
+                      FUN="sd")[[2]]
+
 # Name the colums something useful
-colnames(means) <- c("Education","Income")
+colnames(means) <- c("Education","Income", "SD")
+
+# Compute standard error for each level of
+# education for drawing error bars
+means$se <- c(means$SD/sqrt(table(educationData$Educ)))
 
 # This will change the order in which
 # our variables appear when we graph them
@@ -982,9 +1042,16 @@ means <- means[order(match(means$Education, c("<12","12","13-15","16",">16"))), 
 colors <- c("royalblue1", "royalblue2", "royalblue", "royalblue3", "royalblue4")
 
 # Construct our bar graph and specify axis and main titles
-barplot(means$Income, names.arg = means$Education,
+barCenters <- barplot(height = means$Income, names.arg = means$Education,
         xlab = "Years of Education", ylab = "2005 Income (USD)",
-        main = "Income by Education", col = colors)
+        main = "Income by Education", col = colors,
+        ylim = c(0,85000))
+
+segments(barCenters, means$Income-means$se, barCenters,
+         means$Income+means$se, lwd=1.5)
+arrows(barCenters, means$Income-means$se, barCenters,
+       means$Income+means$se, lwd=1.5,
+       angle=90, code=3, length = 0.05)
 
 ###############################################################################
 # Two-Way ANOVA (Between-measures)
@@ -1027,21 +1094,32 @@ with(IQ, interaction.plot(Adoptive, Biological, IQ))
 means <- aggregate(IQ$IQ,
                    by=list(IQ$Adoptive, IQ$Biological),
                    FUN="mean")
-colnames(means) <- c("Adoptive", "Biological", "IQ")
+means$sd <- aggregate(IQ$IQ,
+                by=list(IQ$Adoptive, IQ$Biological),
+                FUN="sd")[[3]]
+colnames(means) <- c("Adoptive", "Biological", "IQ", "SD")
+means$se <- c(means$SD/sqrt(c(10,8,10,10)))
 
 # Convert to matrix representation for ease of graphing
-means <- matrix(data = means$IQ, nrow=2, ncol=2,
+barData <- matrix(data = means$IQ, nrow=2, ncol=2,
                 dimnames = list(c("High Biological","Low Biological"),
                                 c("High Adoptive","Low Adoptive")))
 
 # Construct bar plot
 par(mar =  c(5, 4, 4, 2))
-barplot(means, beside=TRUE, xlab = "Parent IQs",
-        ylab = "Child's IQ", ylim = c(0, 120),
+barCenters <- barplot(barData, beside=TRUE, xlab = "Parent IQs",
+        ylab = "Child's IQ", ylim = c(0, 130),
         main = "Child by Biological\n and Adoptive Parent IQ",
-        legend = rownames(means),
-        args.legend = list(x = ncol(means) + 4,
-                           y = ncol(means) + 150))
+        legend = rownames(barData),
+        args.legend = list(x = ncol(barData) + 4,
+                           y = ncol(barData) + 150),
+        col = c("steelblue4", "steelblue3"))
+
+segments(barCenters, means$IQ-means$se, barCenters,
+         means$IQ+means$se, lwd=1.5)
+arrows(barCenters, means$IQ-means$se, barCenters,
+       means$IQ+means$se, lwd=1.5,
+       angle=90, code=3, length = 0.05)
 
 ###############################################################################
 # Two-Way ANOVA (Repeated-measures)
@@ -1069,14 +1147,14 @@ satiation <- within(satiation, {
 })
 
 # Compute groupwise means
-satiationMeans <- aggregate(satiation$MS,
+satiationIndividualMeans <- aggregate(satiation$MS,
                             by = list(satiation$PID, satiation$BIAS,
                                       satiation$REPS, satiation$RELATEDNESS),
                             FUN = "mean")
 
 # Name the columns usefully
-colnames(satiationMeans) <- c("PID", "BIAS", "REPS", "RELATEDNESS", "MS")
-View(satiationMeans)
+colnames(satiationIndividualMeans) <- c("PID", "BIAS", "REPS", "RELATEDNESS", "MS")
+head(satiationIndividualMeans)
 
 # Specify our model. Each within-terms factor
 # must also be included in the error term
@@ -1095,3 +1173,53 @@ with(satiation, interaction.plot(BIAS, REPS, MS))
 with(satiation, interaction.plot(REPS, BIAS, MS))
 with(satiation, interaction.plot(RELATEDNESS, BIAS, MS))
 with(satiation, interaction.plot(BIAS, RELATEDNESS, MS))
+
+# Compute summary statistics for plotting
+# Starting with groupwise means
+satiationMeans <- aggregate(satiation$MS,
+                               by = list(satiation$BIAS, satiation$REPS,
+                                         satiation$RELATEDNESS),
+                               FUN = "mean")
+
+# And standard deviations
+satiationMeans$SD <- aggregate(satiation$MS,
+                               by = list(satiation$BIAS, satiation$REPS,
+                                         satiation$RELATEDNESS),
+                               FUN = "sd")[[4]]
+
+# Name our columns
+colnames(satiationMeans) <- c("BIAS", "REPS", "RELATEDNESS", "MS", "SD")
+
+# Get groupwise counts for standard error computation
+counts <- with(satiation, c(table(BIAS, REPS, RELATEDNESS)))
+
+# Compute standard errors
+satiationMeans$se <- satiationMeans$SD/sqrt(counts)
+
+# Construct matrix of data for plotting
+barData <- matrix(data = satiationMeans$MS,
+                  nrow=4, ncol=2,
+                  dimnames = list(c("Dominant Related","Subordinate Related",
+                                    "Dominant Unrelated",
+                                    "Subordinate Unrelated"),
+                                  c("Long","Short")))
+
+# Reset plot margins
+par(mar =  c(5, 4, 4, 2))
+
+# Make a shitty-looking bar graph
+barCenters <- barplot(barData, beside=TRUE, xlab = "Word Repetitions",
+                      ylab = "Response Time (MS)", ylim = c(0, 2500),
+                      legend = rownames(barData),
+                      args.legend = list(x = ncol(barData) + 8.75,
+                                         y = 3250),
+                      main = "Response Time by Reps\n and Meaning Dominance",
+                      col = c("steelblue4", "steelblue",
+                              "steelblue3", "steelblue2"))
+
+# And add error bars
+segments(barCenters, satiationMeans$MS-satiationMeans$se, barCenters,
+         satiationMeans$MS+satiationMeans$se, lwd=1.5)
+arrows(barCenters, satiationMeans$MS-satiationMeans$se, barCenters,
+       satiationMeans$MS+satiationMeans$se, lwd=1.5,
+       angle=90, code=3, length = 0.05)
