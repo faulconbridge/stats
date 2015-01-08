@@ -769,15 +769,15 @@ abline(fit, col = "black")
 rect(x, y, x + ((a+b*x)-y), a+b*x,
      col = "blue", density = 55)
 points(x,y, pch = 16)
-text(2,0.25,"R^2 = SS_res / SS_tot")
+text(2,0.25,"R^2 = 1 - SS_res / SS_tot")
 
-layout(matrix(c(1),1,1))
-plot(x,a+b*x, pch = 16, main = "Explained Sum of Squares\n∑(ŷ_i - ȳ)^2",
-     xlim = c(0, 3.5), ylim = c(0, 3.5), ylab = "y")
-abline(fit, col = "black")
-abline(h = mean(y), col = "black")
-rect(x, a+b*x, x - ((a+b*x)-mean(y)), mean(y),
-     col = "blue", density = 55)
+# layout(matrix(c(1),1,1))
+# plot(x,a+b*x, pch = 16, main = "Explained Sum of Squares\n∑(ŷ_i - ȳ)^2",
+#      xlim = c(0, 3.5), ylim = c(0, 3.5), ylab = "y")
+# abline(fit, col = "black")
+# abline(h = mean(y), col = "black")
+# rect(x, a+b*x, x - ((a+b*x)-mean(y)), mean(y),
+#      col = "blue", density = 55)
 
 
 ###############################################################################
