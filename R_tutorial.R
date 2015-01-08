@@ -358,12 +358,9 @@ names <- c("NSV", "RIO3", "TGFa", "SKAP1", "EPHA1", "CSNK2B", "GUCY2D")
 
 # Calculate the mean for each of our kinase knock-downs
 mean <- aggregate(data2$PFU, list(Kinases = data2$kinase), FUN="mean")
+mean$sd <- aggregate(data2$PFU, list(Kinases = data2$kinase), FUN="sd")[[2]]
+mean$se <- mean$sd/sqrt(3)
 mean <- mean[order(match(mean$Kinases, names)), ]
-
-# And the standard error
-se <- aggregate(data2$PFU, list(Kinases = data2$kinase), FUN=sd)
-se$x <- se$x/sqrt(3)
-se <- se[order(match(se$Kinases, names)), ]
 
 # The par() function lets us change the margins
 # so we can fit all of our data labels
@@ -375,19 +372,18 @@ plotTop <- max(1e+9)
 # Construct our barplot and specify some more
 # graphical parameters
 barCenters <- barplot(height = mean$x, names.arg=names,
-                      col=c("darkslategray", "gray80", "black",
-                            "gray40", "gray60", "white", "darkgray"),
-                      space=0.25,
-                      las=1, ylim=c(1e+06,plotTop), cex.names = 0.7,
+                      col=c("#8dd3c7", "#ffffb3", "#bebada",
+                            "#fb8072", "#80b1d3", "#fdb462", "#b3de69"),
+                      space=0.25, las=1, ylim=c(1e+06,plotTop),
+                      cex.names = 0.8, ylab = "", xlab = "",
                       main = "Rotaviral titers following LV transduction",
-                      ylab = "", xlab = "", border = "black",
-                      axes = TRUE, log = "y", yaxt="n")
+                      border = "black", axes = TRUE, log = "y", yaxt="n")
 
 # Specify the range and labels for our y-axis
 y=c(1e+06,1e+07,1e+08,1e+09)
-ylab=c("1x10^6","1x10^7","1x10^8","1x10^9")
+ylab=c("10^6","10^7","10^8","10^9")
 
-# Finally, construct the axes!
+# Construct the axes
 axis(2, at=y, labels=ylab,
      cex.axis = 0.75, las = 1)
 
@@ -400,8 +396,8 @@ mtext("Lentiviral vector", side=1,
       line=3, cex.lab=2, las=1, col="black")
 
 # Lastly, the error bars
-segments(barCenters, mean$x-se$x, barCenters, mean$x+se$x, lwd=1.5)
-arrows(barCenters, mean$x-se$x, barCenters, mean$x+se$x, lwd=1.5,
+segments(barCenters, mean$x-mean$se, barCenters, mean$x+mean$se, lwd=1.5)
+arrows(barCenters, mean$x-mean$se, barCenters, mean$x+mean$se, lwd=1.5,
        angle=90, code=3, length = 0.05)
 
 
