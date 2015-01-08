@@ -756,21 +756,28 @@ b <- fit[2]
 par(mar = c(5,4,4,2))
 layout(matrix(c(1,2),1,2))
 
-plot(x, y, pch = 16, main = "Simple Average of Y",
+plot(x, y, pch = 16, main = "Total Sum of Squares\n∑(y_i - ȳ)^2",
      xlim = c(0, 3.5), ylim = c(0, 3.5))
 abline(h = mean(y), col = "black")
-rect(x, y, x + (mean(y)-y), mean(y),
+rect(x, y, x - (y-mean(y)), mean(y),
      col = "red", density = 55)
 points(x,y, pch = 16)
-text(1, 3.25, "Total Sum of Squares", col = "red", cex = 0.75)
 
-plot(x,y, pch = 16, main = "Fitted Values of Y",
+plot(x,y, pch = 16, main = "Residual Sum of Squares\n∑(y_i - ŷ_i)^2",
      xlim = c(0, 3.5), ylim = c(0, 3.5))
 abline(fit, col = "black")
 rect(x, y, x + ((a+b*x)-y), a+b*x,
      col = "blue", density = 55)
-text(1.25, 3.25, "Residual Sum of Squares", col = "blue", cex = 0.75)
 points(x,y, pch = 16)
+text(2,0.25,"R^2 = SS_res / SS_tot")
+
+layout(matrix(c(1),1,1))
+plot(x,a+b*x, pch = 16, main = "Explained Sum of Squares\n∑(ŷ_i - ȳ)^2",
+     xlim = c(0, 3.5), ylim = c(0, 3.5), ylab = "y")
+abline(fit, col = "black")
+abline(h = mean(y), col = "black")
+rect(x, a+b*x, x - ((a+b*x)-mean(y)), mean(y),
+     col = "blue", density = 55)
 
 
 ###############################################################################
